@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedSim EMR — Epic Hyperspace ED ASAP Module</title>
+  <style>
+    :root {
+      --epic-navy: #1b2a47;
+      --epic-dark-blue: #131f33;
+      --epic-header: #0f172a;
+      --epic-border: #cbd5e1;
+      --epic-bg: #f1f5f9;
+      --epic-card-bg: #ffffff;
+      --epic-text-main: #1e293b;
+      --epic-text-muted: #64748b;
+      --epic-accent: #2563eb;
+      --epic-hover: #e2e8f0;
+      --epic-red: #dc2626;
+      --epic-orange: #d97706;
+      --epic-green: #10b981;
+      --epic-green-hover: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--epic-bg);
+      color: var(--epic-text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    /* TOP HEADER */
+    .top-header {
+      background-color: var(--epic-navy);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 48px;
+      border-bottom: 2px solid #0f172a;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      background-color: var(--epic-accent);
+      color: white;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .app-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-green {
+      background-color: var(--epic-green);
+      color: white;
+    }
+
+    .btn-green:hover {
+      background-color: var(--epic-green-hover);
+    }
+
+    .btn-blue {
+      background-color: var(--epic-accent);
+      color: white;
+    }
+
+    .btn-blue:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: var(--epic-text-main);
+      border: 1px solid var(--epic-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
+
+    .dept-badge {
+      background-color: var(--epic-dark-blue);
+      color: #cbd5e1;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      border: 1px solid #334155;
+    }
+
+    /* MAIN LAYOUT */
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* TRACK BOARD LEFT */
+    .track-board {
+      width: 250px;
+      background-color: #1e293b;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    .track-header {
+      padding: 10px 14px;
+      background-color: var(--epic-dark-blue);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .patient-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .patient-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #334155;
+      cursor: pointer;
+    }
+
+    .patient-item:hover {
+      background-color: #334155;
+    }
+
+    .patient-item.active {
+      background-color: #2563eb;
+      border-left: 4px solid #60a5fa;
+    }
+
+    .patient-name-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .patient-bed {
+      background-color: var(--epic-orange);
+      color: white;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .patient-meta {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    /* WORKSPACE RIGHT */
+    .chart-workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: var(--epic-bg);
+    }
+
+    .patient-banner {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--epic-border);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .banner-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .banner-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--epic-navy);
+    }
+
+    .banner-tag {
+      font-size: 12px;
+      color: var(--epic-text-muted);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .banner-tag strong {
+      color: var(--epic-text-main);
+    }
+
+    .banner-alerts {
+      display: flex;
+      gap: 8px;
+    }
+
+    .alert-box {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .alert-allergy {
+      background-color: #fee2e2;
+      color: var(--epic-red);
+      border: 1px solid #fca5a5;
+    }
+
+    .alert-acuity {
+      background-color: #fef3c7;
+      color: var(--epic-orange);
+      border: 1px solid #fcd34d;
+    }
+
+    /* TABS */
+    .chart-tabs {
+      display: flex;
+      background-color: #e2e8f0;
+      border-bottom: 1px solid var(--epic-border);
+      padding: 0 12px;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      border: none;
+      background: none;
+      font-weight: 600;
+      color: var(--epic-text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--epic-text-main);
+      background-color: #cbd5e1;
+    }
+
+    .tab-btn.active {
+      color: var(--epic-accent);
+      border-bottom-color: var(--epic-accent);
+      background-color: #ffffff;
+    }
+
+    .tab-content-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* CARDS & TABLES */
+    .card {
+      background: var(--epic-card-bg);
+      border: 1px solid var(--epic-border);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--epic-border);
+      font-weight: 700;
+      color: var(--epic-navy);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: var(--epic-text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* FORMS */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--epic-navy);
+      font-size: 12px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--epic-border);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    /* NOTE STRUCTURE */
+    .note-section {
+      margin-bottom: 16px;
+      border-left: 3px solid var(--epic-navy);
+      padding-left: 12px;
+    }
+
+    .note-title {
+      font-weight: 800;
+      color: var(--epic-navy);
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .note-text {
+      line-height: 1.6;
+      color: var(--epic-text-main);
+      white-space: pre-wrap;
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      width: 750px;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: var(--epic-navy);
+      color: white;
+      padding: 12px 16px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-top: 1px solid var(--epic-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .order-category {
+      font-weight: 800;
+      color: var(--epic-navy);
+      margin: 16px 0 8px 0;
+      border-bottom: 1px solid var(--epic-border);
+      padding-bottom: 4px;
+    }
+
+    .order-category:first-child {
+      margin-top: 0;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .order-item-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .order-item-checkbox:hover {
+      border-color: var(--epic-accent);
+      background: #eff6ff;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 14px;
+      border: 1px solid var(--epic-border);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--epic-navy);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 2000;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="header-left">
+      <span class="logo-badge">MedSim EMR</span>
+      <span class="app-title">Epic Hyperspace — ED ASAP Module</span>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-green" id="btn-attending-signoff" onclick="submitAttendingSignoff()">
+        ✓ Attending Signoff
+      </button>
+      <button class="btn btn-blue" onclick="generateAICase()">
+        + Generate AI ED Case
+      </button>
+      <div class="dept-badge">Dept: EMERGENCY DEPT (ED-Main)</div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    
+    <aside class="track-board">
+      <div class="track-header">
+        <span>ED Track Board</span>
+        <span>4 Active</span>
+      </div>
+      <div class="patient-list">
+        <div class="patient-item active" onclick="selectPatient(this, 'Miller, Liam')">
+          <div class="patient-name-row">
+            <span>Miller, Liam</span>
+            <span class="patient-bed">ED-Bed 1</span>
+          </div>
+          <div class="patient-meta">MRN: 9023411 | 12M old | ESI 1</div>
+          <div class="patient-meta" style="margin-top: 4px; color: #fca5a5;">Vomiting, somnolence, seizures</div>
+        </div>
+        <div class="patient-item" onclick="selectPatient(this, 'Chen, Mei-Ling')">
+          <div class="patient-name-row">
+            <span>Chen, Mei-Ling</span>
+            <span class="patient-bed">ED-Bed 2</span>
+          </div>
+          <div class="patient-meta">MRN: 5394347 | 58F | ESI 2</div>
+          <div class="patient-meta" style="margin-top: 4px;">Thunderclap headache</div>
+        </div>
+        <div class="patient-item" onclick="selectPatient(this, 'Patel, Rajesh K.')">
+          <div class="patient-name-row">
+            <span>Patel, Rajesh K.</span>
+            <span class="patient-bed">ED-Bed 4</span>
+          </div>
+          <div class="patient-meta">MRN: 1094821 | 64M | ESI 2</div>
+          <div class="patient-meta" style="margin-top: 4px;">Substernal chest pain</div>
+        </div>
+        <div class="patient-item" onclick="selectPatient(this, 'Rodriguez, Elena M.')">
+          <div class="patient-name-row">
+            <span>Rodriguez, Elena M.</span>
+            <span class="patient-bed">ED-Bed 9</span>
+          </div>
+          <div class="patient-meta">MRN: 2849102 | 22F | ESI 1</div>
+          <div class="patient-meta" style="margin-top: 4px;">Altered mental status</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="chart-workspace">
+      
+      <section class="patient-banner">
+        <div class="banner-info">
+          <span class="banner-name" id="banner-patient-name">Miller, Liam</span>
+          <span class="banner-tag"><strong>AGE/SEX:</strong> 12 Months Male</span>
+          <span class="banner-tag"><strong>DOB:</strong> 07/15/2025</span>
+          <span class="banner-tag"><strong>MRN:</strong> 9023411</span>
+          <span class="banner-tag"><strong>LOC:</strong> ED-Bed 1</span>
+          <span class="banner-tag"><strong>WT:</strong> 9.8 kg</span>
+          <span class="banner-tag" id="banner-status-tag"><strong>STATUS:</strong> Attending Review Pending</span>
+        </div>
+        <div class="banner-alerts">
+          <div class="alert-box alert-allergy">Allergies: NKDA</div>
+          <div class="alert-box alert-acuity">Acuity: ESI 1 - Resuscitation</div>
+        </div>
+      </section>
+
+      <nav class="chart-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-notes', this)">Clinical Notes (Triage & Final)</button>
+        <button class="tab-btn" onclick="switchTab('tab-orders', this)">Orders & Interventions</button>
+        <button class="tab-btn" onclick="switchTab('tab-labs', this)">Labs & Imaging Workbench</button>
+        <button class="tab-btn" onclick="switchTab('tab-diagnosis', this)">Diagnosis & Problem List</button>
+        <button class="tab-btn" onclick="switchTab('tab-dispo', this)">Consults & Dispo</button>
+      </nav>
+
+      <div class="tab-content-container">
+        
+        <div id="tab-notes" class="tab-pane active">
+          
+          <div class="card">
+            <div class="card-header">ED Provider Triage Assessment — Baseline Clinical Presentation</div>
+            <div class="card-body">
+              
+              <div class="note-section">
+                <div class="note-title">HPI</div>
+                <div class="note-text">12-month-old male brought in by mother with vomiting, somnolence, and seizures that started 4 days ago. Mother reports that the infant "won't take the bottle," vomits multiple times a day, and keeps having "shaking spells."
+Mother states patient seems like "he can't get a full breath in." Describes infant as "fussy" and reports he "bruises easily." Nothing seems to make these symptoms better, and mother states they "seem to get worse" when the infant is lying flat.
+No recent travel out of the country. No sick contacts.</div>
+              </div>
+
+              <div class="note-section">
+                <div class="note-title">Past medical history</div>
+                <div class="note-text">Pre-term delivery due to maternal preeclampsia. Immunizations up-to-date.</div>
+              </div>
+
+              <div class="note-section">
+                <div class="note-title">Medications</div>
+                <div class="note-text">None</div>
+              </div>
+
+              <div class="note-section">
+                <div class="note-title">Allergies</div>
+                <div class="note-text">NKDA</div>
+              </div>
+
+              <div class="note-section">
+                <div class="note-title">Family history</div>
+                <div class="note-text">Major depressive disorder (mother)</div>
+              </div>
+
+              <div class="note-section">
+                <div class="note-title">Social history</div>
+                <div class="note-text">Lives with mother in apartment downtown. Father is "not in the picture," per mother. Recently moved here from another state for mother's new job. Maternal grandmother lives nearby, but is "too busy to help." Patient attends day care. Mother received a call from day care provider 4 days ago with reports that the child started shaking uncontrollably and had been less interactive than usual.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Participant Final Clinical Note & MDM Documentation</div>
+            <div class="card-body">
+              <p style="color: var(--epic-text-muted); margin-bottom: 12px; font-size: 12px;">
+                <em>Instructions: Document your full clinical course below, including Patient Presentation summary, Diagnostic Workup ordered, Interventions performed, Final Diagnosis, and Disposition/Next Steps.</em>
+              </p>
+              <div class="form-group">
+                <textarea id="participant-final-note" rows="12" placeholder="PATIENT PRESENTATION:&#10;&#10;WORKUP & INTERVENTIONS PERFORMED:&#10;&#10;FINAL DIAGNOSIS & MDM:&#10;&#10;DISPOSITION & NEXT STEPS:"></textarea>
+              </div>
+              <button class="btn btn-green" onclick="saveParticipantNote()">Save Participant Final Note</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="tab-orders" class="tab-pane">
+          <div class="card">
+            <div class="card-header">
+              <span>Patient Chart — Active Diagnostic Orders & Clinical Interventions</span>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-blue" onclick="openModal('cpoe-modal')">+ Enter New Order (CPOE)</button>
+                <button class="btn btn-green" onclick="openModal('interventions-modal')">+ Enter New Intervention</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <table id="orders-table">
+                <thead>
+                  <tr>
+                    <th>Order / Intervention Description</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Time Ordered</th>
+                    <th>Ordering Provider</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                  </tbody>
+              </table>
+              <div id="no-orders-msg" style="padding: 24px; text-align: center; color: var(--epic-text-muted);">
+                No diagnostic tests or interventions have been ordered yet. Use the buttons above to initiate workup.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-labs" class="tab-pane">
+          <div class="card">
+            <div class="card-header">Laboratory & Diagnostic Results Workbench</div>
+            <div class="card-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Result Value</th>
+                    <th>Reference Range</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="labs-tbody">
+                  </tbody>
+              </table>
+              <div id="no-labs-msg" style="padding: 24px; text-align: center; color: var(--epic-text-muted);">
+                No diagnostic test results available. Orders placed via CPOE will display here once processed.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-diagnosis" class="tab-pane">
+          <div class="card">
+            <div class="card-header">Provider-Entered Diagnoses & Clinical Problem List</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Add New ED Diagnosis (ICD-10 / Clinical Description):</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="diag-input" placeholder="e.g., Non-accidental trauma, Intracranial hemorrhage..." />
+                  <select id="diag-acuity" style="width: 180px;">
+                    <option value="Critical - Emergent">Critical - Emergent</option>
+                    <option value="Acute - High">Acute - High</option>
+                    <option value="Moderate">Moderate</option>
+                  </select>
+                  <button class="btn btn-blue" onclick="addDiagnosis()">+ Add Diagnosis</button>
+                </div>
+              </div>
+
+              <table style="margin-top: 16px;" id="diagnosis-table">
+                <thead>
+                  <tr>
+                    <th>ICD-10 Code & Clinical Description</th>
+                    <th>Acuity / Priority</th>
+                    <th>Time Entered</th>
+                    <th>Logging Provider</th>
+                  </tr>
+                </thead>
+                <tbody id="diagnosis-tbody">
+                  </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-dispo" class="tab-pane">
+          <div class="card">
+            <div class="card-header">Provider Disposition & Specialty Consultations</div>
+            <div class="card-body">
+              <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label>Primary Disposition Plan:</label>
+                  <select id="dispo-select">
+                    <option value="Admit — Intensive Care Unit (ICU)">Admit — Intensive Care Unit (ICU)</option>
+                    <option value="Admit — Pediatric ICU (PICU)">Admit — Pediatric ICU (PICU)</option>
+                    <option value="Admit — Medical/Surgical Floor">Admit — Medical/Surgical Floor</option>
+                    <option value="Discharge Home with Instructions">Discharge Home with Instructions</option>
+                    <option value="Transfer to Specialized Children's/Trauma Center">Transfer to Specialized Children's/Trauma Center</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Consulting Services Paged:</label>
+                  <input type="text" id="consult-service" placeholder="e.g., Pediatric Neurology, Child Protective Services..." />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Provider Handoff & Disposition Instructions:</label>
+                <textarea rows="4" id="dispo-notes" placeholder="Document verbal handoff and transfer details..."></textarea>
+              </div>
+
+              <button class="btn btn-green" onclick="saveDisposition()">Save Disposition Plan</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="cpoe-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>ED CPOE — Diagnostic Test & Imaging Catalog</span>
+        <button class="btn btn-secondary" style="padding: 2px 8px;" onclick="closeModal('cpoe-modal')">X</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="search-box" placeholder="Filter tests (e.g., CT, Blood Gas, Ultrasound)..." onkeyup="filterCatalog(this, 'cpoe-items')" />
+        
+        <div id="cpoe-items">
+          <div class="order-category">Bedside Tests</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Doppler" data-cat="Bedside Test" /> Doppler</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="ECG" data-cat="Bedside Test" /> ECG</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Fingerstick Blood Sugar" data-cat="Bedside Test" /> Fingerstick Blood Sugar</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Peak Expiratory Flow Meter" data-cat="Bedside Test" /> Peak Expiratory Flow Meter</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ultrasound - Cardiac" data-cat="Bedside Test" /> Ultrasound - Cardiac</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ultrasound - Lung" data-cat="Bedside Test" /> Ultrasound - Lung</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ultrasound - Renal" data-cat="Bedside Test" /> Ultrasound - Renal</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ultrasound - RUQ" data-cat="Bedside Test" /> Ultrasound - RUQ</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ultrasound - Soft Tissue" data-cat="Bedside Test" /> Ultrasound - Soft Tissue</label>
+          </div>
+
+          <div class="order-category">Lab Work</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Arterial Blood Gas" data-cat="Lab Work" /> Arterial Blood Gas</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Basic Chemistry (Chem 7)" data-cat="Lab Work" /> Basic Chemistry (Chem 7)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Blood Type & Screen" data-cat="Lab Work" /> Blood Type & Screen</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Calcium (ionized)" data-cat="Lab Work" /> Calcium (ionized)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Calcium Level" data-cat="Lab Work" /> Calcium Level</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Coagulation Panel" data-cat="Lab Work" /> Coagulation Panel</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Complete Blood Count (CBC)" data-cat="Lab Work" /> Complete Blood Count (CBC)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="D-Dimer" data-cat="Lab Work" /> D-Dimer</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lactate" data-cat="Lab Work" /> Lactate</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lipase" data-cat="Lab Work" /> Lipase</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Liver Function Tests (LFTs)" data-cat="Lab Work" /> Liver Function Tests (LFTs)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Magnesium Level" data-cat="Lab Work" /> Magnesium Level</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Phosphate Level" data-cat="Lab Work" /> Phosphate Level</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="pro-BNP" data-cat="Lab Work" /> pro-BNP</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Troponin-T" data-cat="Lab Work" /> Troponin-T</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Urinalysis" data-cat="Lab Work" /> Urinalysis</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Acetaminophen Level" data-cat="Lab Work" /> Acetaminophen Level</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Amylase" data-cat="Lab Work" /> Amylase</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Blood Culture x 2" data-cat="Lab Work" /> Blood Culture x 2</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="C-reactive Protein (CRP)" data-cat="Lab Work" /> C-reactive Protein (CRP)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="COVID-19 test" data-cat="Lab Work" /> COVID-19 test</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Creatine Kinase (CK)" data-cat="Lab Work" /> Creatine Kinase (CK)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CSF Cell Count" data-cat="Lab Work" /> CSF Cell Count</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CSF Glucose" data-cat="Lab Work" /> CSF Glucose</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CSF Gram Stain" data-cat="Lab Work" /> CSF Gram Stain</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CSF Protein" data-cat="Lab Work" /> CSF Protein</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Erythrocyte Sedimentation Rate (ESR)" data-cat="Lab Work" /> Erythrocyte Sedimentation Rate (ESR)</label>
+          </div>
+
+          <div class="order-category">Other Labs</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Ethanol Level (EtOH)" data-cat="Other Labs" /> Ethanol Level (EtOH)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lactate dehydrogenase (LDH)" data-cat="Other Labs" /> Lactate dehydrogenase (LDH)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Osmolality" data-cat="Other Labs" /> Osmolality</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Peripheral smear" data-cat="Other Labs" /> Peripheral smear</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Salicylate (Aspirin) Level" data-cat="Other Labs" /> Salicylate (Aspirin) Level</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="TSH" data-cat="Other Labs" /> TSH</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Uric Acid" data-cat="Other Labs" /> Uric Acid</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Urine Culture" data-cat="Other Labs" /> Urine Culture</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Urine Tox Screen" data-cat="Other Labs" /> Urine Tox Screen</label>
+          </div>
+
+          <div class="order-category">Imaging</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="CT - Abdomen" data-cat="Imaging" /> CT - Abdomen</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CT - C-spine" data-cat="Imaging" /> CT - C-spine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="CT - Head" data-cat="Imaging" /> CT - Head</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="US - Abdomen" data-cat="Imaging" /> US - Abdomen</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="XR - Abdomen (KUB)" data-cat="Imaging" /> XR - Abdomen (KUB)</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="XR - Chest" data-cat="Imaging" /> XR - Chest</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="XR - Pelvis" data-cat="Imaging" /> XR - Pelvis</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="XR - Skeletal Survey" data-cat="Imaging" /> XR - Skeletal Survey</label>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('cpoe-modal')">Cancel</button>
+        <button class="btn btn-blue" onclick="submitOrders('cpoe-modal')">+ Sign & Submit Selected Tests</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="interventions-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>ED Interventions Catalog — Emergency Medications & Resuscitation</span>
+        <button class="btn btn-secondary" style="padding: 2px 8px;" onclick="closeModal('interventions-modal')">X</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="search-box" placeholder="Filter medications and interventions..." onkeyup="filterCatalog(this, 'interventions-items')" />
+
+        <div id="interventions-items">
+          <div class="order-category">Meds - Intubation</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Etomidate bolus" data-cat="Intubation" /> Etomidate bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ketamine bolus" data-cat="Intubation" /> Ketamine bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lidocaine bolus" data-cat="Intubation" /> Lidocaine bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Midazolam bolus" data-cat="Intubation" /> Midazolam bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Propofol bolus" data-cat="Intubation" /> Propofol bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Rocuronium bolus" data-cat="Intubation" /> Rocuronium bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Succinylcholine bolus" data-cat="Intubation" /> Succinylcholine bolus</label>
+          </div>
+
+          <div class="order-category">Meds - Gastrointestinal</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Esomeprazole bolus" data-cat="GI Med" /> Esomeprazole bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Famotidine bolus" data-cat="GI Med" /> Famotidine bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Glucagon" data-cat="GI Med" /> Glucagon</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Metoclopramide" data-cat="GI Med" /> Metoclopramide</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Octreotide bolus/infusion" data-cat="GI Med" /> Octreotide bolus/infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ondansetron" data-cat="GI Med" /> Ondansetron</label>
+          </div>
+
+          <div class="order-category">Meds - Antibiotics</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Acyclovir" data-cat="Antibiotic" /> Acyclovir</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Amoxicillin" data-cat="Antibiotic" /> Amoxicillin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Amphotericin" data-cat="Antibiotic" /> Amphotericin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ampicillin" data-cat="Antibiotic" /> Ampicillin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Azithromycin" data-cat="Antibiotic" /> Azithromycin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Cefazolin" data-cat="Antibiotic" /> Cefazolin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Cefepime" data-cat="Antibiotic" /> Cefepime</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Cefotaxime" data-cat="Antibiotic" /> Cefotaxime</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ceftriaxone" data-cat="Antibiotic" /> Ceftriaxone</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ciprofloxacin" data-cat="Antibiotic" /> Ciprofloxacin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Clindamycin" data-cat="Antibiotic" /> Clindamycin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Doxycycline" data-cat="Antibiotic" /> Doxycycline</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Fluconazole" data-cat="Antibiotic" /> Fluconazole</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Gentamicin" data-cat="Antibiotic" /> Gentamicin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Levofloxacin" data-cat="Antibiotic" /> Levofloxacin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Metronidazole" data-cat="Antibiotic" /> Metronidazole</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Oseltamivir" data-cat="Antibiotic" /> Oseltamivir</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Piperacillin-tazobactam" data-cat="Antibiotic" /> Piperacillin-tazobactam</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Vancomycin" data-cat="Antibiotic" /> Vancomycin</label>
+          </div>
+
+          <div class="order-category">Meds - Allergy & Tox</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Diphenhydramine" data-cat="Allergy/Tox" /> Diphenhydramine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Epinephrine Intramuscular" data-cat="Allergy/Tox" /> Epinephrine Intramuscular</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Methylprednisolone bolus" data-cat="Allergy/Tox" /> Methylprednisolone bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Prednisone" data-cat="Allergy/Tox" /> Prednisone</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Activated Charcoal" data-cat="Allergy/Tox" /> Activated Charcoal</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Flumazenil" data-cat="Allergy/Tox" /> Flumazenil</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Naloxone bolus" data-cat="Allergy/Tox" /> Naloxone bolus</label>
+          </div>
+
+          <div class="order-category">Meds - Resuscitation & Vasoactive Agents</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Adenosine" data-cat="Resuscitation" /> Adenosine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Amiodarone" data-cat="Resuscitation" /> Amiodarone</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Atropine" data-cat="Resuscitation" /> Atropine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Calcium Gluconate" data-cat="Resuscitation" /> Calcium Gluconate</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="D10W infusion" data-cat="Resuscitation" /> D10W infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="D25 bolus" data-cat="Resuscitation" /> D25 bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Epinephrine bolus" data-cat="Resuscitation" /> Epinephrine bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Epinephrine infusion" data-cat="Resuscitation" /> Epinephrine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lidocaine infusion" data-cat="Resuscitation" /> Lidocaine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Magnesium Sulfate infusion" data-cat="Resuscitation" /> Magnesium Sulfate infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Na-Bicarbonate bolus" data-cat="Resuscitation" /> Na-Bicarbonate bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Na-Bicarbonate infusion" data-cat="Resuscitation" /> Na-Bicarbonate infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Dobutamine infusion" data-cat="Vasoactive" /> Dobutamine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Dopamine infusion" data-cat="Vasoactive" /> Dopamine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Milrinone infusion" data-cat="Vasoactive" /> Milrinone infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Nicardipine infusion" data-cat="Vasoactive" /> Nicardipine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Norepinephrine infusion" data-cat="Vasoactive" /> Norepinephrine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Phenylephrine infusion" data-cat="Vasoactive" /> Phenylephrine infusion</label>
+          </div>
+
+          <div class="order-category">Meds - Sedation / Analgesia & Cardiac</div>
+          <div class="order-grid">
+            <label class="order-item-checkbox"><input type="checkbox" value="Acetaminophen" data-cat="Sedation/Analgesia" /> Acetaminophen</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Dexmedetomidine infusion" data-cat="Sedation/Analgesia" /> Dexmedetomidine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Fentanyl bolus" data-cat="Sedation/Analgesia" /> Fentanyl bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Hydromorphone bolus" data-cat="Sedation/Analgesia" /> Hydromorphone bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ibuprofen" data-cat="Sedation/Analgesia" /> Ibuprofen</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ketamine infusion" data-cat="Sedation/Analgesia" /> Ketamine infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Ketorolac" data-cat="Sedation/Analgesia" /> Ketorolac</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Lorazepam bolus" data-cat="Sedation/Analgesia" /> Lorazepam bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Morphine bolus" data-cat="Sedation/Analgesia" /> Morphine bolus</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Amlodipine" data-cat="Cardiac Med" /> Amlodipine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Aspirin" data-cat="Cardiac Med" /> Aspirin</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Clopidogrel" data-cat="Cardiac Med" /> Clopidogrel</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Diltiazem" data-cat="Cardiac Med" /> Diltiazem</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Esmolol infusion" data-cat="Cardiac Med" /> Esmolol infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Heparin bolus/infusion" data-cat="Cardiac Med" /> Heparin bolus/infusion</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Hydralazine" data-cat="Cardiac Med" /> Hydralazine</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Labetalol" data-cat="Cardiac Med" /> Labetalol</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Metoprolol" data-cat="Cardiac Med" /> Metoprolol</label>
+            <label class="order-item-checkbox"><input type="checkbox" value="Nitroglycerin Sublingual" data-cat="Cardiac Med" /> Nitroglycerin Sublingual</label>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('interventions-modal')">Cancel</button>
+        <button class="btn btn-green" onclick="submitOrders('interventions-modal')">+ Sign & Execute Interventions</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast-notify">
+    <span id="toast-text">Orders submitted successfully.</span>
+  </div>
+
+  <script>
+    // 1. TABS
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    // 2. PATIENT SWITCHER
+    function selectPatient(element, patientName) {
+      document.querySelectorAll('.patient-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('banner-patient-name').innerText = patientName;
+      showToast("Switched patient chart to: " + patientName);
+    }
+
+    // 3. ATTENDING SIGNOFF
+    function submitAttendingSignoff() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('banner-status-tag').innerHTML = `<strong>STATUS:</strong> Signed Off by Attending @ ${timeString}`;
+      document.getElementById('btn-attending-signoff').style.backgroundColor = "#059669";
+      document.getElementById('btn-attending-signoff').innerText = `✓ Attending Signed Off (${timeString})`;
+      showToast("Chart successfully signed off by Attending.");
+    }
+
+    // 4. MODALS
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // 5. SUBMIT ORDERS & INTERVENTIONS
+    function submitOrders(modalId) {
+      const checkedBoxes = document.querySelectorAll(`#${modalId} input[type="checkbox"]:checked`);
+      if (checkedBoxes.length === 0) {
+        alert("Please select at least one item to submit.");
+        return;
+      }
+
+      const ordersTbody = document.getElementById('orders-tbody');
+      const labsTbody = document.getElementById('labs-tbody');
+      const noOrdersMsg = document.getElementById('no-orders-msg');
+      const noLabsMsg = document.getElementById('no-labs-msg');
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (noOrdersMsg) noOrdersMsg.style.display = 'none';
+
+      checkedBoxes.forEach(checkbox => {
+        const trOrder = document.createElement('tr');
+        const desc = checkbox.value;
+        const cat = checkbox.getAttribute('data-cat') || "ED Order";
+
+        // Add to Orders & Interventions table
+        trOrder.innerHTML = `
+          <td><strong>${desc}</strong></td>
+          <td>${cat}</td>
+          <td><span style="color: var(--epic-green); font-weight: 700;">Active / In Progress</span></td>
+          <td>${timeStr}</td>
+          <td>Simulated Provider</td>
+        `;
+        ordersTbody.prepend(trOrder);
+
+        // If it's a test/imaging, also add a placeholder line to the Labs & Imaging workbench
+        if (modalId === 'cpoe-modal') {
+          if (noLabsMsg) noLabsMsg.style.display = 'none';
+          const trLab = document.createElement('tr');
+          trLab.innerHTML = `
+            <td><strong>${desc}</strong></td>
+            <td><em>Pending Lab/Rad Processing...</em></td>
+            <td>--</td>
+            <td><span style="color: var(--epic-orange); font-weight: 700;">In Progress</span></td>
+          `;
+          labsTbody.prepend(trLab);
+        }
+
+        checkbox.checked = false;
+      });
+
+      closeModal(modalId);
+      showToast(`${checkedBoxes.length} items signed and added to chart.`);
+    }
+
+    // 6. SEARCH FILTER FOR CATALOGS
+    function filterCatalog(inputElement, containerId) {
+      const filter = inputElement.value.toLowerCase();
+      const labels = document.querySelectorAll(`#${containerId} label`);
+      labels.forEach(label => {
+        const text = label.textContent || label.innerText;
+        label.style.display = text.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+      });
+    }
+
+    // 7. PARTICIPANT NOTE SAVE
+    function saveParticipantNote() {
+      const text = document.getElementById('participant-final-note').value;
+      if (!text.trim()) {
+        alert("Please type your clinical note before saving.");
+        return;
+      }
+      showToast("Participant Final Note saved to permanent chart.");
+    }
+
+    // 8. DIAGNOSIS ADD
+    function addDiagnosis() {
+      const input = document.getElementById('diag-input');
+      const acuity = document.getElementById('diag-acuity').value;
+      if (!input.value.trim()) return alert("Enter a diagnosis description.");
+
+      const tbody = document.getElementById('diagnosis-tbody');
+      const tr = document.createElement('tr');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      tr.innerHTML = `
+        <td><strong>${input.value.trim()}</strong></td>
+        <td><span style="color: var(--epic-red); font-weight: 700;">${acuity}</span></td>
+        <td>${timeStr}</td>
+        <td>Simulated Provider</td>
+      `;
+      tbody.prepend(tr);
+      input.value = "";
+      showToast("Diagnosis added to problem list.");
+    }
+
+    // 9. DISPO SAVE
+    function saveDisposition() {
+      const dispo = document.getElementById('dispo-select').value;
+      showToast("Disposition plan saved: " + dispo);
+    }
+
+    // 10. AI CASE GENERATOR
+    function generateAICase() {
+      showToast("AI Simulator: Initializing new ED case presentation...");
+    }
+
+    // 11. TOAST HELPER
+    function showToast(message) {
+      const toast = document.getElementById('toast-notify');
+      document.getElementById('toast-text').innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>
